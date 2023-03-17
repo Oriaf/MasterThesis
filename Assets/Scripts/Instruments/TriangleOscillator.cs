@@ -17,20 +17,15 @@ public class TriangleOscillator : Oscillator
 	
 		for(int i = 0; i < data.Length; i += channels){
 			pos += increment;
-			if(pos > period) pos -= period;
-			//pos = (double) Mathf.Repeat((float) pos, (float) period); // Modulo pos so it is always within the period
-			//double t = pos / period;
+			pos = (double) Mathf.Repeat((float) pos, (float) period); // Modulo pos so it is always within the period
+			double t = pos / period;
 			
 			// Sample the tone of the instrument and write it to each channel
-			//float tone = 2 * Mathf.Abs(2 * ((float) t - Mathf.Floor((float) t + 0.5f))) - 1;
-			
-			float tone = (float) ((2 / System.Math.PI) * System.Math.Asin(System.Math.Sin(2 * System.Math.PI / period * pos)));
+			float tone = 2 * Mathf.Abs(2 * ((float) t - Mathf.Floor((float) t + 0.5f))) - 1;
 			
 			for(int j = 0; j < channels; j++){
 				data[i + j] = gain * tone;
 			}
-			
-			//Debug.Log(data[i]);
 		}
 	}
 }

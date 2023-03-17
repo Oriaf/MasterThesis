@@ -7,7 +7,7 @@ public class Synthesis : MonoBehaviour
 
 	/*
 	 	Simple:
-			Triangle Wave Oscillator
+			Triangle Wave Oscillator or Sine Wave Oscillator
 				Equal Temperament Midi notes
 				
 			Vary Pitch (130 Hz to 523 Hz; 251 Hz at th center)
