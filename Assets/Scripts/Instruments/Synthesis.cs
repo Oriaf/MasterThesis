@@ -31,11 +31,13 @@ public class Synthesis : MonoBehaviour
 	 */
 	 
 	private TriangleOscillator osc;
+	private SineOscillator oscSine;
 
     // Start is called before the first frame update
     void Start()
     {
         osc = new TriangleOscillator(220, 0.5f, 48000);
+		oscSine = new SineOscillator(220, 0.5f, 48000);
     }
 
     // Update is called once per frame
@@ -45,6 +47,7 @@ public class Synthesis : MonoBehaviour
     }
 	
 	void OnAudioFilterRead(float[] data, int channels){
-		osc.sampleTone(data, channels);
+		//osc.sampleTone(data, channels);
+		oscSine.sampleTone(data, channels);
 	}
 }

@@ -13,7 +13,7 @@ public class TriangleOscillator : Oscillator
 	override public void sampleTone(float[] data, int channels){
 		double period = 1 / frequency;
 	
-		double increment = 1 / sampleRate; // 1 / (samples per period)
+		double increment = 1 / sampleRate; // seconds per sample
 	
 		for(int i = 0; i < data.Length; i += channels){
 			pos += increment;
