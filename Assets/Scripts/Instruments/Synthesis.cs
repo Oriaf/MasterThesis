@@ -56,7 +56,7 @@ public class Synthesis : MonoBehaviour
 		//chirp.sampleTone(data, channels);
 		
 		Vector3 pos = Vector3.zero;
-		pos.x = 0.05f;
+		pos.x = 0.125f;
 		
 		shepard.sampleInstrument(data, channels, pos);
 		
