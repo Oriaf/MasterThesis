@@ -7,6 +7,9 @@ public class ExpChirpOscillator : Oscillator
 	private double duration; // Duration in seconds until the frequency is one octave higher
 
 	public ExpChirpOscillator(double f_start, float g, double sr, double dur) : base(f_start, g, sr){ duration = dur; }
+	
+	public double getDuration() { return duration; }
+	public void setDuration(double d) { duration = d; }
 
 	/*
 	 * Fills a data buffer with samples from the Oscillator.
@@ -22,7 +25,10 @@ public class ExpChirpOscillator : Oscillator
 			if(pos > duration) pos -= duration;
 			
 			// Sample the tone of the instrument and write it to each channel
-			float tone = Mathf.Sin((float) (constantPart * System.Math.Pow(2, pos / duration)));
+			double arg = constantPart * System.Math.Pow(2, pos / duration);
+			if(duration == System.Double.PositiveInfinity) arg = frequency * 2.0 * Mathf.PI * pos;
+			
+			float tone = Mathf.Sin((float) arg);
 			
 			for(int j = 0; j < channels; j++){
 				data[i + j] = gain * tone;

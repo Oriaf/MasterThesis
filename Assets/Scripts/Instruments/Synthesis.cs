@@ -56,13 +56,13 @@ public class Synthesis : MonoBehaviour
 		//chirp.sampleTone(data, channels);
 		
 		Vector3 pos = Vector3.zero;
-		pos.x = 0.1f;
+		pos.x = 0.05f;
 		
 		shepard.sampleInstrument(data, channels, pos);
 		
 		//double maxAmp = shepard.getMaxAmp();
 		for(int i = 0; i < data.Length; i++){
-			data[i] = data[i] / (float) (12);
+			//data[i] = data[i] / (float) (12);
 		}
 	}
 }

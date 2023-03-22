@@ -9,6 +9,9 @@ public class ShepardTone
 	private const double V1 = 1.0;
 	private const double V2 = 1.0;
 	private const double OMEGA_MOD = 50;
+	
+	private const double SHEPARD_DURATION = 1.0; // Duration of a repetition of the shepard tone in seconds
+	private const double EPSILON = 0.00000000001;
 
 	// Instrument settings
 	private float gain;
@@ -47,8 +50,15 @@ public class ShepardTone
 			//ampConst[i] = (System.Math.Cos(System.Math.Log((frequency[i] - f0) / (System.Math.Pow(2, N) * f0))) - 1) / -2;
 			phi[i] = (double) i / (double) (N - 1);	
 			//partial[i] = new SineOscillator(frequency[i], (float) 1.0f, sampleRate);
-			partial[i] = new ExpChirpOscillator(frequency[i], (float) 1.0f, sampleRate, 8);				
+			partial[i] = new ExpChirpOscillator(frequency[i], (float) 1.0f, sampleRate, SHEPARD_DURATION);				
 		}
+	}
+	
+	private bool doubleEqual(double a, double b, double error){
+		return System.Math.Abs(a - b) < error;
+	}
+	private bool floatEqual(float a, float b, float error){
+		return Mathf.Abs(a - b) < error;
 	}
 	
 	private double PHI(int i, double x, double t){
@@ -79,7 +89,10 @@ public class ShepardTone
 		
 		double increment = 1.0 / (sampleRate);
 		
+		double shepardDuration = (!floatEqual(pos.x, 0.0f, (float) EPSILON)) ? SHEPARD_DURATION / pos.x : System.Double.PositiveInfinity;
+		
 		//partial[0].sampleTone(buffer, channels);
+		partial[0].setDuration(shepardDuration);
 		partial[0].sampleTone(data, channels);
 		
 		/*double t = time;
@@ -90,7 +103,8 @@ public class ShepardTone
 			t += increment;
 		}*/
 		
-		for(int i = 1; i < N; i++){		
+		for(int i = 1; i < N; i++){
+			partial[i].setDuration(shepardDuration);
 			partial[i].sampleTone(buffer, channels);
 
 			//t = time;
@@ -104,7 +118,7 @@ public class ShepardTone
 		
 		// Normalize the sound level
 		for(int i = 0; i < data.Length; i++){
-			data[i] = data[i] / N;
+			data[i] = gain * data[i] / N;
 		}
 		
 		time += increment * data.Length;
