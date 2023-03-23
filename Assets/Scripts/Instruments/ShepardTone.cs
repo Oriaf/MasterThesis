@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class ShepardTone
 {
-	private const double MU_0 = 1.0; // Don't put this above 2!!!!!!
-	private const double SIGMA_0 = 1.0; // Don't put this below 1!!!!!
+	private const double MU_0 = 1; // Don't put this above 2!!!!!!
+	private const double SIGMA_0 = 30; // Don't put this below 1!!!!!
 	private const double V1 = 1.0;
 	private const double V2 = 1.0;
 	private const double OMEGA_MOD = 50;
 	
-	private const double SHEPARD_DURATION = 1.0; // Duration of a repetition of the shepard tone in seconds
+	//private const double SHEPARD_DURATION = 1.0; // Duration of a repetition of the shepard tone in seconds
 	private const double EPSILON = 0.00000000001;
 
 	// Instrument settings
@@ -50,7 +50,7 @@ public class ShepardTone
 			//ampConst[i] = (System.Math.Cos(System.Math.Log((frequency[i] - f0) / (System.Math.Pow(2, N) * f0))) - 1) / -2;
 			phi[i] = (double) i / (double) (N - 1);	
 			//partial[i] = new SineOscillator(frequency[i], (float) 1.0f, sampleRate);
-			partial[i] = new ShepardChirpOscillator(frequency[0], (float) 1.0f, sampleRate, N, phi[i], SHEPARD_DURATION);				
+			partial[i] = new ShepardChirpOscillator(frequency[0], (float) 1.0f, sampleRate, N, phi[i]);				
 		}
 	}
 	
@@ -64,7 +64,11 @@ public class ShepardTone
 	private double PHI(int i, double x, double t){
 		//if((x * t + phi[i]) >= 1.0) Debug.Log("i: " + i + ", PHI_i: " + (x * t + phi[i]) % 1.0 + ", t: " + t);
 	
-		return (x * t + phi[i]) % 1.0;
+		double a = (x * t + phi[i]);
+		double b = 1.0;
+		return  System.Math.IEEERemainder(a, b); // Mathematical Modulo
+	
+		//return (x * t + phi[i]) % 1.0;
 	}
 	
 	private double mu(double z){
@@ -89,21 +93,22 @@ public class ShepardTone
 		
 		double increment = 1.0 / (sampleRate);
 		
-		double shepardDuration = (!floatEqual(pos.x, 0.0f, (float) EPSILON)) ? SHEPARD_DURATION / pos.x : System.Double.PositiveInfinity;
+		//double shepardDuration = (!floatEqual(pos.x, 0.0f, (float) EPSILON)) ? SHEPARD_DURATION / pos.x : System.Double.PositiveInfinity;
 		
 		partial[0].setX(pos.x);
-		partial[0].sampleTone(buffer, channels);
+		//partial[0].sampleTone(buffer, channels);
+		partial[0].sampleTone(data, channels);
 		/*partial[0].setDuration(shepardDuration);
 		partial[0].sampleTone(data, channels);*/
 		
 		double t = time;
-		for(int i = 0; i < data.Length; i++){
-			data[i] += (float) buffer[i];
-			data[i] = (float) A(0, pos, t) * buffer[i];
-			//data[i] = 0.0f;
+		/*for(int i = 0; i < data.Length; i++){
+			data[i] = (float) (A(0, pos, t) * buffer[i]);
+			//data[i] =  buffer[i];
 			
 			t += increment;
-		}
+			//if(t > 1.0 / pos.x) t = System.Math.IEEERemainder(t, 1.0 / pos.x);
+		}*/
 		
 		for(int i = 1; i < N; i++){
 			//partial[i].setDuration(shepardDuration);
@@ -113,19 +118,21 @@ public class ShepardTone
 			t = time;
 			for(int j = 0; j < data.Length; j++){
 				//partial[i].setFrequency(frequency[0] * System.Math.Pow(2, N * PHI(i, pos.x, time)));
-				data[j] += (float) A(i, pos, t) * buffer[j];
-				//data[j] += (float) buffer[j];
+				//data[j] += (float) (A(i, pos, t) * buffer[j]);
+				data[j] += buffer[j];
 				
 				t += increment;
+				//if(t > 1.0 / pos.x) t = System.Math.IEEERemainder(t, 1.0 / pos.x);
 			}
 		}
 		
 		// Normalize the sound level
 		for(int i = 0; i < data.Length; i++){
-			data[i] = gain * data[i] / N;
+			data[i] = 5 * data[i] / (N);
 		}
 		
 		time += increment * data.Length;
+		//if(time > 1.0 / pos.x) time = System.Math.IEEERemainder(time, 1.0 / pos.x);
 	}
 
 }

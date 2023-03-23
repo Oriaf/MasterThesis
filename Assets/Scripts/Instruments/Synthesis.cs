@@ -34,14 +34,16 @@ public class Synthesis : MonoBehaviour
 	private SineOscillator oscSine;
 	private ShepardTone shepard;
 	private ExpChirpOscillator chirp;
+	private ShepardChirpOscillator chirp2;
 
     // Start is called before the first frame update
     void Start()
     {
         osc = new TriangleOscillator(220, 0.5f, 48000);
 		oscSine = new SineOscillator(220, 0.5f, 48000);
-		shepard = new ShepardTone(3.125, 0.5f, 48000, 12);
+		shepard = new ShepardTone(30, 0.5f, 48000, 7);
 		chirp = new ExpChirpOscillator(440, 0.5f, 48000, 8);
+		chirp2 = new ShepardChirpOscillator(3.125, 0.5f, 48000, 12, 5.0 / 11.0);
     }
 
     // Update is called once per frame
@@ -56,13 +58,11 @@ public class Synthesis : MonoBehaviour
 		//chirp.sampleTone(data, channels);
 		
 		Vector3 pos = Vector3.zero;
-		pos.x = 0.125f;
+		pos.x = 0.01f;
+		
+		/*chirp2.setX(pos.x);
+		chirp2.sampleTone(data, channels);*/
 		
 		shepard.sampleInstrument(data, channels, pos);
-		
-		//double maxAmp = shepard.getMaxAmp();
-		for(int i = 0; i < data.Length; i++){
-			//data[i] = data[i] / (float) (12);
-		}
 	}
 }
