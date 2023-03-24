@@ -8,8 +8,8 @@ public class ShepardChirpOscillator : Oscillator
 	double phi;
 	private double x;
 	
-	private const double MU_0 = 1; // Don't put this above 2!!!!!!
-	private const double SIGMA_0 = 30; // Don't put this below 1!!!!!
+	private double MU_0 = 7.0 / 12.0; // Don't put this above 2!!!!!!
+	private double SIGMA_0 = 1.4 / 12.0; //1 / System.Math.Sqrt(2 * System.Math.PI); // Don't put this below 1 / sqrt(2 * PI)
 	private const double V1 = 1.0;
 	private const double V2 = 1.0;
 	private const double OMEGA_MOD = 50;
@@ -17,6 +17,8 @@ public class ShepardChirpOscillator : Oscillator
 	public ShepardChirpOscillator(double f_start, float g, double sr, int oct, double p) : base(f_start, g, sr){
 		phi = p;
 		N = oct;
+		
+		MU_0 = (N - 1) / N;
 	}
 	
 	public double getX() { return x; }
@@ -40,8 +42,8 @@ public class ShepardChirpOscillator : Oscillator
 	}
 	
 	private double A(double t){
-		double power = System.Math.Pow(PHI(t) - mu(0), 2) / (2 * System.Math.Pow(sigma(0), 2));
-		double sqrt = System.Math.Sqrt(2 * System.Math.PI * sigma(0));
+		double power = System.Math.Pow(PHI(t) - mu(0), 2) / (-2 * System.Math.Pow(sigma(0), 2));
+		double sqrt = 1.0; //sigma(0) * System.Math.Sqrt(2 * System.Math.PI);
 		
 		return System.Math.Pow(System.Math.E, power) / sqrt;
 	}

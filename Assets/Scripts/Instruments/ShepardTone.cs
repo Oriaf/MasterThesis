@@ -128,7 +128,7 @@ public class ShepardTone
 		
 		// Normalize the sound level
 		for(int i = 0; i < data.Length; i++){
-			data[i] = 5 * data[i] / (N);
+			data[i] = data[i] / (N);
 		}
 		
 		time += increment * data.Length;

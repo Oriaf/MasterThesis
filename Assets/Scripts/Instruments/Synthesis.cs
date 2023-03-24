@@ -41,7 +41,7 @@ public class Synthesis : MonoBehaviour
     {
         osc = new TriangleOscillator(220, 0.5f, 48000);
 		oscSine = new SineOscillator(220, 0.5f, 48000);
-		shepard = new ShepardTone(30, 0.5f, 48000, 7);
+		shepard = new ShepardTone(30, 0.5f, 48000, 12);
 		chirp = new ExpChirpOscillator(440, 0.5f, 48000, 8);
 		chirp2 = new ShepardChirpOscillator(3.125, 0.5f, 48000, 12, 5.0 / 11.0);
     }
