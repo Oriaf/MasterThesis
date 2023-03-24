@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class ShepardTone
 {
-	private const double V1 = 1.0;
-	private const double V2 = 1.0;
-	private const double OMEGA_MOD = 50;
-
 	// Instrument settings
 	private float gain;
 	private double sampleRate;
@@ -16,7 +12,8 @@ public class ShepardTone
 	// Partial constants
 	private double[] frequency;
 	private ShepardChirpOscillator[] partial;
-	private double scaleFactor;
+	private double scaleFactorX;
+	private double scaleFactorY = 15;
 
 	public ShepardTone(double f0, double g, double sr, int n){
 		gain = (float) g;
@@ -31,7 +28,7 @@ public class ShepardTone
 			partial[i] = new ShepardChirpOscillator(frequency[0], (float) 1.0f, sampleRate, N, (double) i / (double) (N - 1));				
 		}
 		
-		scaleFactor = 4.0 / (double) N; // Make sure that x values are scaled so that the period T = 1 / (xN) of a repetition is > 250 ms (4 Hz)
+		scaleFactorX = 4.0 / (double) N; // Make sure that x values are scaled so that the period T = 1 / (xN) of a repetition is > 250 ms (4 Hz)
 	}
 	
 	public void sampleInstrument(float[] data, int channels, Vector3 pos){
@@ -39,11 +36,13 @@ public class ShepardTone
 		
 		double increment = 1.0 / (sampleRate);
 		
-		partial[0].setX(pos.x * scaleFactor);;
+		partial[0].setX(pos.x * scaleFactorX);
+		partial[0].setY(pos.y);
 		partial[0].sampleTone(data, channels);
 		
 		for(int i = 1; i < N; i++){
-			partial[i].setX(pos.x * scaleFactor);
+			partial[i].setX(pos.x * scaleFactorX);
+			partial[i].setY(pos.y * scaleFactorY);
 			partial[i].sampleTone(buffer, channels);
 
 			for(int j = 0; j < data.Length; j++){

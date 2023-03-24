@@ -7,6 +7,7 @@ public class ShepardChirpOscillator : Oscillator
 	private int N; // Number of octaves to cover
 	double phi;
 	private double x;
+	private double y;
 	
 	/*
 		The shepard tone is affected by an envelope A(t) indirectly dependent on the frequency of the shepard tone.
@@ -19,9 +20,7 @@ public class ShepardChirpOscillator : Oscillator
 	*/
 	private const double MU_0 = 0;
 	private double SIGMA_0;
-	private const double V1 = 1.0;
-	private const double V2 = 1.0;
-	private const double OMEGA_MOD = 50;
+	private const double OMEGA_MOD = 2.0 * System.Math.PI * 50;
 
 	public ShepardChirpOscillator(double f_start, float g, double sr, int oct, double p) : base(f_start, g, sr){
 		phi = p;
@@ -32,6 +31,9 @@ public class ShepardChirpOscillator : Oscillator
 	
 	public double getX() { return x; }
 	public void setX(double X) { x = X; }
+	
+	public double getY() { return y; }
+	public void setY(double Y) { y = Y; }
 
 	private double PHI(double t){
 		double a = (x * t + phi);
@@ -39,19 +41,19 @@ public class ShepardChirpOscillator : Oscillator
 		return System.Math.IEEERemainder(a, b); // Mathematical Modulo
 	}
 	
-	private double mu(double z){
-		return (z < 0) ? MU_0 : MU_0 - z;
-	}
-	
-	private double sigma(double y){
-		return (y < 0) ? SIGMA_0 : SIGMA_0 - V2 * y;
-	}
-	
 	private double A(double t){
-		double power = System.Math.Pow(PHI(t) - mu(0), 2) / (-2 * System.Math.Pow(sigma(0), 2));
-		double sqrt = System.Math.Sqrt(2 * System.Math.PI * sigma(0));
+		double power = System.Math.Pow(PHI(t) - MU_0, 2) / (-2 * System.Math.Pow(SIGMA_0, 2));
+		double sqrt = System.Math.Sqrt(2 * System.Math.PI * SIGMA_0);
 		
 		return System.Math.Pow(System.Math.E, power) / sqrt;
+	}
+	
+	private double G(double t){
+		return (y < 0) ? 1.0 + 0.5 * System.Math.Sin(2.0 * System.Math.PI * -y * t) : 1.0;
+	}
+	
+	private double beta(){
+		return (y >= 0) ? 1.0 * System.Math.Pow(y, 1.0) + 1.0 : 0;
 	}
 	
 	/*
@@ -69,10 +71,12 @@ public class ShepardChirpOscillator : Oscillator
 			// Sample the tone of the instrument and write it to each channel
 			double arg = constantPart * System.Math.Pow(2, N * PHI(pos)) * pos; //FM Synthesis
 			
-			float tone = Mathf.Cos((float) arg);
+			double disonance = beta() * System.Math.Cos(OMEGA_MOD * pos);
+			
+			float tone = Mathf.Cos((float) (arg + disonance)) ;
 			
 			for(int j = 0; j < channels; j++){
-				data[i + j] = gain * (float) A(pos) * tone;
+				data[i + j] = (float)G(pos) * (float) A(pos) * tone;
 			}
 		}
 	}
