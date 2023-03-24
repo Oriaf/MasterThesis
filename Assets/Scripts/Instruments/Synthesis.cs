@@ -30,6 +30,8 @@ public class Synthesis : MonoBehaviour
 			HRTF?
 	 */
 	 
+	public float x = 0;
+	 
 	private TriangleOscillator osc;
 	private SineOscillator oscSine;
 	private ShepardTone shepard;
@@ -58,7 +60,7 @@ public class Synthesis : MonoBehaviour
 		//chirp.sampleTone(data, channels);
 		
 		Vector3 pos = Vector3.zero;
-		pos.x = 0.01f;
+		pos.x = x;
 		
 		/*chirp2.setX(pos.x);
 		chirp2.sampleTone(data, channels);*/

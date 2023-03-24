@@ -17,8 +17,8 @@ public class ShepardChirpOscillator : Oscillator
 		MU_0 and SIGMA_0 need to be selected so that if the frequency f = f_0 * 2^(N * PHI(x, t)) is plotted in a log-lin plot
 		against the A(t) function, then the bell curve is centered
 	*/
-	private const double MU_0 = 0; // Should vary between [0, 1], increases the brightness of the tone. Frequency Log Centered: 7.0/12
-	private double SIGMA_0; // Should vary between (0, 3/24]. Frequency Log Centered: 1.5 / 12.0
+	private const double MU_0 = 0;
+	private double SIGMA_0;
 	private const double V1 = 1.0;
 	private const double V2 = 1.0;
 	private const double OMEGA_MOD = 50;
@@ -34,9 +34,6 @@ public class ShepardChirpOscillator : Oscillator
 	public void setX(double X) { x = X; }
 
 	private double PHI(double t){
-		//Debug.Log(t + ", " + x + ", " + (x * t + phi) % 1.0);
-	
-		//return (x * t + phi) % 1.0;
 		double a = (x * t + phi);
 		double b = 1.0;
 		return System.Math.IEEERemainder(a, b); // Mathematical Modulo
@@ -68,7 +65,6 @@ public class ShepardChirpOscillator : Oscillator
 	
 		for(int i = 0; i < data.Length; i += channels){
 			pos += increment;
-			//if(pos > 1.0 / x) pos = System.Math.IEEERemainder(pos, 1.0 / x);
 			
 			// Sample the tone of the instrument and write it to each channel
 			double arg = constantPart * System.Math.Pow(2, N * PHI(pos)) * pos; //FM Synthesis
