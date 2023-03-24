@@ -8,8 +8,17 @@ public class ShepardChirpOscillator : Oscillator
 	double phi;
 	private double x;
 	
-	private double MU_0 = 7.0 / 12.0; // Don't put this above 2!!!!!!
-	private double SIGMA_0 = 1.4 / 12.0; //1 / System.Math.Sqrt(2 * System.Math.PI); // Don't put this below 1 / sqrt(2 * PI)
+	/*
+		The shepard tone is affected by an envelope A(t) indirectly dependent on the frequency of the shepard tone.
+		Higher pitches are perceived as louder, hence we want the amplitude function to fall off towards the higher end of the spectra.
+		Thus MU_0 should be close to 0 to ensure a gradual roll off of the tone with the pitch.
+		Similarly SIGMA_0 should be balanced so that as much of the spectra is included, whilst still making sure the higher pitches go to 0.
+	
+		MU_0 and SIGMA_0 need to be selected so that if the frequency f = f_0 * 2^(N * PHI(x, t)) is plotted in a log-lin plot
+		against the A(t) function, then the bell curve is centered
+	*/
+	private const double MU_0 = 0; // Should vary between [0, 1], increases the brightness of the tone. Frequency Log Centered: 7.0/12
+	private double SIGMA_0; // Should vary between (0, 3/24]. Frequency Log Centered: 1.5 / 12.0
 	private const double V1 = 1.0;
 	private const double V2 = 1.0;
 	private const double OMEGA_MOD = 50;
@@ -18,7 +27,7 @@ public class ShepardChirpOscillator : Oscillator
 		phi = p;
 		N = oct;
 		
-		MU_0 = (N - 1) / N;
+		SIGMA_0 = 1.4 / (double) N;
 	}
 	
 	public double getX() { return x; }
@@ -43,7 +52,7 @@ public class ShepardChirpOscillator : Oscillator
 	
 	private double A(double t){
 		double power = System.Math.Pow(PHI(t) - mu(0), 2) / (-2 * System.Math.Pow(sigma(0), 2));
-		double sqrt = 1.0; //sigma(0) * System.Math.Sqrt(2 * System.Math.PI);
+		double sqrt = System.Math.Sqrt(2 * System.Math.PI * sigma(0));
 		
 		return System.Math.Pow(System.Math.E, power) / sqrt;
 	}
