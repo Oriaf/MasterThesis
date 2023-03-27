@@ -39,6 +39,7 @@ public class Synthesis : MonoBehaviour
 	private ExpChirpOscillator chirp;
 	private ShepardChirpOscillator chirp2;
 	private SimpleTone simple;
+	private SpatialTone spatial;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +50,7 @@ public class Synthesis : MonoBehaviour
 		chirp = new ExpChirpOscillator(440, 0.5f, 48000, 8);
 		chirp2 = new ShepardChirpOscillator(3.125, 0.5f, 48000, 12, 5.0 / 11.0);
 		simple = new SimpleTone(130, 0.25f, 48000, 1.0f, GetComponent<AudioSource>());
+		spatial = new SpatialTone(0.5f, 48000);
     }
 
     // Update is called once per frame
@@ -69,7 +71,8 @@ public class Synthesis : MonoBehaviour
 		/*chirp2.setX(pos.x);
 		chirp2.sampleTone(data, channels);*/
 		
-		shepard.sampleInstrument(data, channels, pos);
+		//shepard.sampleInstrument(data, channels, pos);
 		//simple.sampleInstrument(data, channels, pos);
+		spatial.sampleInstrument(data, channels, pos);
 	}
 }
