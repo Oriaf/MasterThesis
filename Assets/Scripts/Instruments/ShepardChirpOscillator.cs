@@ -21,6 +21,9 @@ public class ShepardChirpOscillator : Oscillator
 	private const double MU_0 = 0;
 	private double SIGMA_0;
 	private const double OMEGA_MOD = 2.0 * System.Math.PI * 50;
+	private const double a = 1.0;
+	private const double b = 1.0;
+	private const double c = 0.1;
 
 	public ShepardChirpOscillator(double f_start, float g, double sr, int oct, double p) : base(f_start, g, sr){
 		phi = p;
@@ -53,7 +56,7 @@ public class ShepardChirpOscillator : Oscillator
 	}
 	
 	private double beta(){
-		return (y >= 0) ? 1.0 * System.Math.Pow(y, 1.0) + 1.0 : 0;
+		return (y > 0) ? a * System.Math.Pow(y, b) + c : 0;
 	}
 	
 	/*
