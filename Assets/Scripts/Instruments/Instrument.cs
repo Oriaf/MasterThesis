@@ -14,8 +14,6 @@ public abstract class Instrument
 		frequency = f;
 		gain = g;
 		sampleRate = sr;
-		
-		updateFlag = false;
 	}
 	
 	public double getFrequency() { return frequency; }
@@ -25,12 +23,6 @@ public abstract class Instrument
 	public void setFrequency(double f) { frequency = f; }
 	public void setGain(float g) { gain = g; }
 	public void setSampleRate(double sr) { sampleRate = sr; }
-	
-	public bool hasUpdate() { return updateFlag; }
-	
-	public virtual void performUpdateWork(){
-		//Intentionally empty; Should be overriden if used by instrument
-	}
 
     public abstract void sampleInstrument(float[] data, int channels, Vector3 pos);
 }
