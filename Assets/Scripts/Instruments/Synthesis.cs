@@ -38,6 +38,7 @@ public class Synthesis : MonoBehaviour
 	private ShepardTone shepard;
 	private ExpChirpOscillator chirp;
 	private ShepardChirpOscillator chirp2;
+	private SimpleTone simple;
 
     // Start is called before the first frame update
     void Start()
@@ -47,12 +48,15 @@ public class Synthesis : MonoBehaviour
 		shepard = new ShepardTone(30, 0.5f, 48000, 12);
 		chirp = new ExpChirpOscillator(440, 0.5f, 48000, 8);
 		chirp2 = new ShepardChirpOscillator(3.125, 0.5f, 48000, 12, 5.0 / 11.0);
+		simple = new SimpleTone(130, 1.0f, 0.5f, 48000, GetComponent<AudioSource>());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+		if(simple.hasUpdate()){
+			simple.performUpdateWork();
+		}
     }
 	
 	void OnAudioFilterRead(float[] data, int channels){
@@ -67,6 +71,7 @@ public class Synthesis : MonoBehaviour
 		/*chirp2.setX(pos.x);
 		chirp2.sampleTone(data, channels);*/
 		
-		shepard.sampleInstrument(data, channels, pos);
+		//shepard.sampleInstrument(data, channels, pos);
+		simple.sampleInstrument(data, channels, pos);
 	}
 }
