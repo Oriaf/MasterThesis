@@ -10,12 +10,14 @@ public class SimpleTone : Instrument
 	
 	// Partial constants
 	private TriangleOscillator oscillator;
+	private TriangleOscillator refOscillator;
 
 	public SimpleTone(double f0, float g, double sr, float s, AudioSource aus) : base(f0, g, sr){
 		scale = s;
 		audio = aus;
 		
 		oscillator = new TriangleOscillator(f0, g, sr);
+		refOscillator = new TriangleOscillator(f0 * 2, g, sr);
 	}
 	
 	override public void sampleInstrument(float[] data, int channels, Vector3 pos){
@@ -30,6 +32,8 @@ public class SimpleTone : Instrument
 		float pan = Mathf.Clamp(pos.x, -1.0f, 1.0f);
 		
 		oscillator.sampleTone(data, channels);
+		float[] buf = new float[data.Length];
+		refOscillator.sampleTone(buf, channels);
 		for(int i = 0; i < data.Length; i += channels){
 			//Perform stereo panning
 			/*data[i] = (1.0f - x) * data[i];
@@ -40,8 +44,9 @@ public class SimpleTone : Instrument
 			data[i + 1] = (Mathf.Pow(2.0f, Mathf.Clamp(1.0f + pan, 0f, 1.0f)) - 1.0f) * data[i + 1]; // Semi-Linear panning with logarithmic mapping */
 			/*data[i] = Mathf.Sqrt(1.0f - x) * data[i];
 			data[i + 1] = Mathf.Sqrt(x) * data[i + 1]; // Square-law panning*/
-			data[i] = Mathf.Sin((1.0f - x) * (Mathf.PI / 2.0f)) * data[i];
-			data[i + 1] = Mathf.Sin(x * (Mathf.PI / 2.0f)) * data[i + 1]; // Sin-law panning
+			data[i] = Mathf.Sin((1.0f - x) * (Mathf.PI / 2.0f)) * data[i] + buf[i];
+			data[i + 1] = Mathf.Sin(x * (Mathf.PI / 2.0f)) * data[i + 1] + buf[i + 1]; // Sin-law panning
+			
 			
 		
 			// Handle the rest of the channels if more than stereo
