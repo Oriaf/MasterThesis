@@ -21,6 +21,8 @@ public class LightEval : MonoBehaviour
 	private int currentTrial;
 	private float time;
 	private bool pause;
+	private bool trainingDone;
+	private Vector3 trainingPos;
 
 	// Sonification Instruments
 	private ShepardTone shepard;
@@ -58,9 +60,12 @@ public class LightEval : MonoBehaviour
 		
 		Debug.Log(order);
 		
+		trainingPos = Vector3.zero;
+		
 		currentTrial = -1;
 		time = float.NegativeInfinity;
 		pause = true;
+		trainingDone = false;
     }
 	
 	private Instrument getInstrument(){
@@ -87,6 +92,17 @@ public class LightEval : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(!trainingDone){
+			trainingPos = Input.mousePosition;
+			trainingPos.x = (2f * trainingPos.x) / Screen.width - 1f;
+			trainingPos.y = (2f * trainingPos.y) / Screen.height - 1f;
+			Debug.Log(trainingPos);
+			
+			if(Input.GetKeyDown("space")) trainingDone = true;
+		
+			return;
+		}
+	
 		if(Time.time - time > 7.0f){
 			if(pause){
 				currentTrial++;
@@ -99,6 +115,13 @@ public class LightEval : MonoBehaviour
     }
 	
 	void OnAudioFilterRead(float[] data, int channels){
+		if(!trainingDone){
+			Instrument instrument = getInstrument();
+			instrument.sampleInstrument(data, channels, trainingPos);
+		
+			return;
+		}
+	
 		if(!pause && currentTrial < n){
 			Vector3 pos = values[valIndex[currentTrial]];
 		
