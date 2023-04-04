@@ -22,7 +22,8 @@ public class LightEval : MonoBehaviour
 	private float time;
 	private bool pause;
 	private bool trainingDone;
-	private Vector3 trainingPos;
+	private bool answered;
+	private Vector3 mousePos;
 
 	// Sonification Instruments
 	private ShepardTone shepard;
@@ -60,12 +61,13 @@ public class LightEval : MonoBehaviour
 		
 		Debug.Log(order);
 		
-		trainingPos = Vector3.zero;
+		mousePos = Vector3.zero;
 		
 		currentTrial = -1;
 		time = float.NegativeInfinity;
 		pause = true;
 		trainingDone = false;
+		answered = false;
     }
 	
 	private Instrument getInstrument(){
@@ -88,25 +90,67 @@ public class LightEval : MonoBehaviour
 		
 		return instrument;
 	}
+	
+	private void calculateField(Vector3 pos){
+		float d = Vector3.Distance(Vector3.zero, pos);
+		
+		
+	
+		if(d < 0.5f){
+		
+		}
+		else if (d < 0.75f){
+		
+		}
+		else if (d < 1f) {
+		
+		}
+		else {
+		
+		}
+	}
 
     // Update is called once per frame
     void Update()
     {
+		mousePos = Input.mousePosition;
+		mousePos.x = (2f * mousePos.x) / Screen.width - 1f;
+		mousePos.y = (2f * mousePos.y) / Screen.height - 1f;
+	
 		if(!trainingDone){
-			trainingPos = Input.mousePosition;
-			trainingPos.x = (2f * trainingPos.x) / Screen.width - 1f;
-			trainingPos.y = (2f * trainingPos.y) / Screen.height - 1f;
-			Debug.Log(trainingPos);
+			//Debug.Log(mousePos);
+			Vector3 pos = mousePos;
+			pos.z = pos.y;
+			pos.y = 0;
+			transform.position = pos;
 			
 			if(Input.GetKeyDown("space")) trainingDone = true;
 		
 			return;
+		}
+		
+		if(Input.GetMouseButtonDown(0) && !answered){
+			Debug.Log(mousePos);
+			answered = true;
+			
+			if(!pause){
+				pause = true;
+				time = Time.time;
+			}
 		}
 	
 		if(Time.time - time > 7.0f){
 			if(pause){
 				currentTrial++;
 				Debug.Log(currentTrial + 1);
+				
+				Vector3 pos = values[valIndex[currentTrial]];
+				pos.z = pos.y;
+				pos.y = 0;
+				
+				transform.position = pos;
+				
+				answered = false;
 			}
 		
 			pause = !pause;
@@ -117,7 +161,7 @@ public class LightEval : MonoBehaviour
 	void OnAudioFilterRead(float[] data, int channels){
 		if(!trainingDone){
 			Instrument instrument = getInstrument();
-			instrument.sampleInstrument(data, channels, trainingPos);
+			instrument.sampleInstrument(data, channels, mousePos);
 		
 			return;
 		}
