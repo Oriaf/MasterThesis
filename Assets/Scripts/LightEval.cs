@@ -60,6 +60,7 @@ public class LightEval : MonoBehaviour
 		}
 		
 		Debug.Log(order);
+		Debug.Log("");
 		
 		mousePos = Vector3.zero;
 		
@@ -91,23 +92,46 @@ public class LightEval : MonoBehaviour
 		return instrument;
 	}
 	
-	private void calculateField(Vector3 pos){
-		float d = Vector3.Distance(Vector3.zero, pos);
+	private int calculateField(Vector3 pos){
+		// Convert to polar coordinates
+		float r = Vector3.Distance(Vector3.zero, pos);
+		float phi = Mathf.Atan2(pos.y, pos.x);
+		if(phi < 0) phi += 2f * Mathf.PI;
 		
-		
-	
-		if(d < 0.5f){
-		
+		int quadrantBase = 0;
+		if(phi < 0); //Debug.LogError("Answer " + pos + " gives an invalid phi value of " + phi);
+		else if(phi < Mathf.PI / 2f){
+			// First quadrant
+			quadrantBase = 0;
 		}
-		else if (d < 0.75f){
-		
+		else if(phi < Mathf.PI){
+			// Second quadrant
+			quadrantBase = 4;
 		}
-		else if (d < 1f) {
-		
+		else if(phi < Mathf.PI * 1.5f){
+			// Third quadrant
+			quadrantBase = 8;
 		}
-		else {
-		
+		else if(phi < 2f * Mathf.PI){
+			// Fourth quadrant
+			quadrantBase = 12;
 		}
+		
+		int fieldIndex = 0;
+		if (r < 0 || r > 1f); //Debug.LogError("Answer " + pos + " gives an invalid radius value of " + r);
+		else if (r < 0.5f){
+			fieldIndex = 1;
+		}
+		else if (r < 0.75f){
+			float angle = Mathf.Repeat(phi, Mathf.PI / 2f);
+			if (angle < Mathf.PI / 4f) fieldIndex = 2;
+			else fieldIndex = 3;
+		}
+		else if (r < 1f) {
+			fieldIndex = 4;
+		}
+		
+		return quadrantBase + fieldIndex;
 	}
 
     // Update is called once per frame
@@ -118,7 +142,10 @@ public class LightEval : MonoBehaviour
 		mousePos.y = (2f * mousePos.y) / Screen.height - 1f;
 	
 		if(!trainingDone){
+			mousePos.z = calculateField(mousePos);
 			//Debug.Log(mousePos);
+			
+			// 3D sound
 			Vector3 pos = mousePos;
 			pos.z = pos.y;
 			pos.y = 0;
@@ -130,6 +157,7 @@ public class LightEval : MonoBehaviour
 		}
 		
 		if(Input.GetMouseButtonDown(0) && !answered){
+			mousePos.z = calculateField(mousePos);
 			Debug.Log(mousePos);
 			answered = true;
 			
@@ -144,6 +172,7 @@ public class LightEval : MonoBehaviour
 				currentTrial++;
 				Debug.Log(currentTrial + 1);
 				
+				//3D sound
 				Vector3 pos = values[valIndex[currentTrial]];
 				pos.z = pos.y;
 				pos.y = 0;

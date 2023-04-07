@@ -21,7 +21,7 @@ public class ShepardTone : Instrument
 			partial[i] = new ShepardChirpOscillator(f0, (float) 1.0f, sampleRate, N, (double) i / (double) (N - 1));				
 		}
 		
-		scaleFactorX = 4.0 / (double) N; // Make sure that x values are scaled so that the period T = 1 / (xN) of a repetition is > 250 ms (4 Hz)
+		scaleFactorX = (4.0 / (double) N) / 4.0; // Make sure that x values are scaled so that the period T = 1 / (xN) of a repetition is > 250 ms (4 Hz). Currently > 1s
 	}
 	
 	override public void sampleInstrument(float[] data, int channels, Vector3 pos){
