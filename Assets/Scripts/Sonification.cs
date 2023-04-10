@@ -94,7 +94,7 @@ public class Sonification : MonoBehaviour
 		Vector3 targetProj = Vector3.ProjectOnPlane(targetNormal, Vector3.up);
 		// 2. Calculating the required yaw angle
 		float yaw = Vector3.SignedAngle(catProj, targetProj, Vector3.up);
-		angles.x = yaw;
+		angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > 1.8f ? yaw : angles.x;
 		
 		// 3. Rotate catheter vector by the required yaw angle
 		Quaternion rot = new Quaternion();
@@ -102,7 +102,7 @@ public class Sonification : MonoBehaviour
 		Vector3 rotCat = rot * catheter.up;
 		// 4. Calculate the required pitch angle
 		float pitch = Vector3.SignedAngle(rotCat, targetNormal, Vector3.one);
-		angles.y = pitch;
+		angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > 1.8f ? pitch : angles.y;
 
 
 		// Update the psotion of the sound source (for spatial)
