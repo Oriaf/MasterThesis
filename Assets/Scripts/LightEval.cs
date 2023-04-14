@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LightEval : MonoBehaviour
@@ -11,6 +9,8 @@ public class LightEval : MonoBehaviour
 	
 	[Header("Sonification Settings")]
 	public SonificationType sonification = SonificationType.Simple;
+	public double sigma0 = 1.4 / 12.0;
+	public double mu0 = 0;
 	
 	[Header("Light EvaluationS Settings")]
 	public int n = 20;
@@ -137,13 +137,20 @@ public class LightEval : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		if(shepard != null)
+		{
+            shepard.sigma0 = sigma0;
+            shepard.mu0 = mu0;
+        }
+		
+
 		mousePos = Input.mousePosition;
 		mousePos.x = (2f * mousePos.x) / Screen.width - 1f;
 		mousePos.y = (2f * mousePos.y) / Screen.height - 1f;
 	
 		if(!trainingDone){
 			mousePos.z = calculateField(mousePos);
-			//Debug.Log(mousePos);
+			Debug.Log(mousePos);
 			
 			// 3D sound
 			Vector3 pos = mousePos;

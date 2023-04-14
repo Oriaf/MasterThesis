@@ -13,6 +13,9 @@ public class ShepardTone : Instrument
 	private double scaleFactorX;
 	private double scaleFactorY = 15;
 
+	public double sigma0 = 1.4 / 12.0;
+	public double mu0 = 0;
+
 	public ShepardTone(double f0, float g, double sr, int n) : base(f0, g, sr){
 		N = n;
 		
@@ -25,7 +28,13 @@ public class ShepardTone : Instrument
 	}
 	
 	override public void sampleInstrument(float[] data, int channels, Vector3 pos){
-		float[] buffer = new float[data.Length];
+        for (int i = 0; i < N; i++)
+        {
+			partial[i].SIGMA_0 = sigma0;
+			partial[i].MU_0 = mu0;
+        }
+
+        float[] buffer = new float[data.Length];
 		
 		partial[0].setX(pos.x * scaleFactorX);
 		partial[0].setY(pos.y);
@@ -45,7 +54,7 @@ public class ShepardTone : Instrument
 		
 		// Normalize the sound level
 		for(int i = 0; i < data.Length; i++){
-			data[i] = data[i] / (N);
+			data[i] = data[i] / ((float) N);
 		}
 	}
 

@@ -96,16 +96,17 @@ public class Sonification : MonoBehaviour
 		//Up is z-axis, forward is y-axis
 		//Debug.Log(catheter.up + ", " + catheter.right + ", " + catheter.forward);
 
-        float catPitch = Mathf.Acos(catheter.up.y / catheter.up.magnitude) * DEG_CON;
-        float catYaw = Mathf.Atan2(catheter.up.z, catheter.up.x) * DEG_CON;
+        float catPitch = Mathf.Acos(catheter.up.y / catheter.up.magnitude) * DEG_CON; //0 - 180 degrees
+        float catYaw = Mathf.Atan2(catheter.up.z, catheter.up.x) * DEG_CON; //-180 - 180 degress
         //Debug.Log(catYaw + ", " + catPitch);
 
-        float targetPitch = Mathf.Acos(targetNormal.y / targetNormal.magnitude) * DEG_CON;
-        float targetYaw = Mathf.Atan2(targetNormal.z, targetNormal.x) * DEG_CON;
+        float targetPitch = Mathf.Acos(targetNormal.y / targetNormal.magnitude) * DEG_CON; //0 - 180 degrees
+        float targetYaw = Mathf.Atan2(targetNormal.z, targetNormal.x) * DEG_CON; //-180 - 180 degress 
         //Debug.Log("\t" + targetYaw + ", " + targetPitch);
 
-        float pitch = targetPitch - catPitch;
-        float yaw = targetYaw - catYaw;
+        float pitch = targetPitch - catPitch; //-180 to 180 degrees
+        float yaw = Mathf.Repeat(360f + (targetYaw - catYaw), 360f); //0 to 360 degrees
+		yaw = (yaw > 180f) ? yaw - 360f : yaw; //-180 to 180 degrees
         //Debug.Log(yaw + ", " + pitch);
 
 

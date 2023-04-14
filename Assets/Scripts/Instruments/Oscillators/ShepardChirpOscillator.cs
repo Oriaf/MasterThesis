@@ -18,8 +18,8 @@ public class ShepardChirpOscillator : Oscillator
 		MU_0 and SIGMA_0 need to be selected so that if the frequency f = f_0 * 2^(N * PHI(x, t)) is plotted in a log-lin plot
 		against the A(t) function, then the bell curve is centered
 	*/
-	private const double MU_0 = 0;
-	private double SIGMA_0;
+	public double MU_0 = 0;
+	public double SIGMA_0 = 1.4 / 12.0;
 	private const double OMEGA_MOD = 2.0 * System.Math.PI * 50;
 	private const double a = 1.0;
 	private const double b = 1.0;
@@ -29,7 +29,7 @@ public class ShepardChirpOscillator : Oscillator
 		phi = p;
 		N = oct;
 		
-		SIGMA_0 = 1.4 / (double) N;
+		//SIGMA_0 = 1.4 / (double) N;
 	}
 	
 	public double getX() { return x; }
