@@ -121,7 +121,7 @@ public class Sonification : MonoBehaviour
         // Update the psotion of the sound source (for spatial)
         const float RAD_CON = Mathf.PI / 180f;
 
-        Vector3 pos = new Vector3(Mathf.Sin(angles.y * RAD_CON) * Mathf.Cos(angles.x * RAD_CON), Mathf.Cos(angles.y * RAD_CON), Mathf.Sin(angles.y * RAD_CON) * Mathf.Sin(angles.x * RAD_CON));
+        Vector3 pos = new Vector3(Mathf.Sin(targetPitch * RAD_CON) * Mathf.Cos(targetYaw * RAD_CON), Mathf.Cos(targetPitch * RAD_CON), Mathf.Sin(targetPitch * RAD_CON) * Mathf.Sin(targetYaw * RAD_CON));
         transform.localPosition = pos;
 
 		
