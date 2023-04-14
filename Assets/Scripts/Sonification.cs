@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using UnityEngine;
 
 public class Sonification : MonoBehaviour
@@ -23,6 +20,7 @@ public class Sonification : MonoBehaviour
 	
 	// Data Variables
 	private Vector3 targetNormal;
+	private Vector3 targetPoint;
 	private Vector3 angles;
 
 	// Sonification Instruments
@@ -45,6 +43,7 @@ public class Sonification : MonoBehaviour
 			if(!hit.point.Equals(entryPoint)) Debug.LogWarning("Something went wrong with the raycast!");
 			
 			targetNormal = hit.normal;
+			targetPoint = hit.point;
 		}
 		else{
 			Debug.LogError("Could not find the surface normal of the patient's skull!");
@@ -77,78 +76,55 @@ public class Sonification : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		//Debug.Log(catheter.up + ", " + targetNormal);
+		//Angle axis to undo roll?
+
+        Debug.DrawRay(targetPoint, targetNormal, Color.red);
+
+		Debug.DrawRay(catheter.position, catheter.forward, Color.green);
+        Debug.DrawRay(catheter.position, catheter.right, Color.red);
+        Debug.DrawRay(catheter.position, catheter.up, Color.blue);
+
+        Debug.DrawRay(catheter.position, targetNormal, Color.yellow);
 		
 		/*
-			1. Project both vectors onto the x-z plane
-			2. Calculating the required yaw angle
-			3. Rotate catheter vector by the required yaw angle
-			4. Calculate the required pitch angle
-			
-			Pitch and yaw will always be the shortest angle to the target angle
-			Pitch increases as the catheter's tip moves towards the world's positive y-axis
-			Yaw increases as the catheter's tip moves in the x-z plane towards the negative z-axis clockwise
+			1. Convert the two target vectors to spherical coordinates with the xz reference plane
+			2. Take the difference between their angles to get the relative yaw and pitch
+			3. Update the position of the sound for spatial reasons
 		*/
-		
-		// 1. Project both vectors onto the x-z plane
-		/*Vector3 catProj = Vector3.ProjectOnPlane(catheter.up, Vector3.up);
-		Vector3 targetProj = Vector3.ProjectOnPlane(targetNormal, Vector3.up);*/
-        //Vector3 catProj = Vector3.ProjectOnPlane((new Vector3(1, 1, 1)).normalized, Vector3.up);
-        //Vector3 targetProj = Vector3.ProjectOnPlane((new Vector3(-1, -1, 1)).normalized, Vector3.up);
-
 		const float DEG_CON = 180f / Mathf.PI;
 
-		Debug.Log(catheter.up);
-		float catPitch = Mathf.Atan2(catheter.up.y, catheter.up.x) * DEG_CON;
+		//Up is z-axis, forward is y-axis
+		//Debug.Log(catheter.up + ", " + catheter.right + ", " + catheter.forward);
+
+        float catPitch = Mathf.Acos(catheter.up.y / catheter.up.magnitude) * DEG_CON;
         float catYaw = Mathf.Atan2(catheter.up.z, catheter.up.x) * DEG_CON;
-		Debug.Log(catYaw + ", " + catPitch);
+        //Debug.Log(catYaw + ", " + catPitch);
 
-        float targetPitch = Mathf.Atan2(targetNormal.y, targetNormal.x) * DEG_CON;
+        float targetPitch = Mathf.Acos(targetNormal.y / targetNormal.magnitude) * DEG_CON;
         float targetYaw = Mathf.Atan2(targetNormal.z, targetNormal.x) * DEG_CON;
-        Debug.Log("\t" + targetYaw + ", " + targetPitch);
+        //Debug.Log("\t" + targetYaw + ", " + targetPitch);
 
-		float yaw = targetYaw - catYaw;
-		float pitch = targetPitch - catPitch;
+        float pitch = targetPitch - catPitch;
+        float yaw = targetYaw - catYaw;
+        //Debug.Log(yaw + ", " + pitch);
+
+
+        Debug.DrawRay(catheter.position, targetNormal, Color.yellow);
+
         angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > 1.8f ? yaw : angles.x;
         angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > 1.8f ? pitch : angles.y;
 
-
-        Debug.Log("\t" + angles.x + ", " + angles.y);
-
-        // 2. Calculating the required yaw angle
-        //float yaw = Vector3.SignedAngle(catProj, targetProj, Vector3.up);
-        //Debug.Log(catProj + ", " + targetProj + ", " + yaw);
-        //angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > 1.8f ? yaw : angles.x;
-
-		
-		// 3. Rotate catheter vector by the required yaw angle
-		/*Quaternion rot = new Quaternion();
-		rot.eulerAngles = new Vector3(0, yaw, 0);
-		Vector3 rotCat = rot * catheter.up;
-		// 4. Calculate the required pitch angle
-		float pitch = Vector3.SignedAngle(rotCat, targetNormal, Vector3.up);*/
-        //catProj = Vector3.ProjectOnPlane((new Vector3(1, 1, 1)).normalized, Vector3.forward);
-        //targetProj = Vector3.ProjectOnPlane((new Vector3(-1, -1, 1)).normalized, Vector3.forward);
-        // 4. Calculate the required pitch angle
-        //float pitch = Vector3.SignedAngle(catProj, targetProj, Vector3.forward);
-        //angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > 1.8f ? pitch : angles.y;
-        //Debug.Log("\t" + catProj + ", " + targetProj + ", " + pitch);
+        //Debug.Log("\t" + angles.x + ", " + angles.y);
 
 
         // Update the psotion of the sound source (for spatial)
         const float RAD_CON = Mathf.PI / 180f;
-		//Vector3 pos = new Vector3(Mathf.Sin(angles.y * RAD_CON) * Mathf.Cos(angles.x * RAD_CON), Mathf.Cos(angles.y * RAD_CON), Mathf.Sin(angles.y * RAD_CON) * Mathf.Sin(angles.x * RAD_CON));
-
-		/*float normalYaw = Vector3.SignedAngle(Vector3.right, targetProj, Vector3.up);
-		rot.eulerAngles = new Vector3(0, -normalYaw, 0);
-		Vector3 rotNorm = rot * targetNormal;
-		float normalPitch = Vector3.SignedAngle(Vector3.right, rotNorm, Vector3.up);*/
 
         Vector3 pos = new Vector3(Mathf.Sin(angles.y * RAD_CON) * Mathf.Cos(angles.x * RAD_CON), Mathf.Cos(angles.y * RAD_CON), Mathf.Sin(angles.y * RAD_CON) * Mathf.Sin(angles.x * RAD_CON));
         transform.localPosition = pos;
 
 		
-		//Debug.Log(angles / 180f);
+		Debug.Log(angles / 180f);
     }
 	
 	void OnAudioFilterRead(float[] data, int channels){

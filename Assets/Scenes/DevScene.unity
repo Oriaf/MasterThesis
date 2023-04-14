@@ -1064,7 +1064,7 @@ AudioSource:
   m_Pitch: 1
   Loop: 0
   Mute: 0
-  Spatialize: 1
+  Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
@@ -1104,7 +1104,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1173,7 +1173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 0
   y: 0
-  sonification: 2
+  sonification: 1
   catheter: {fileID: 1306546143}
   patientSkull: {fileID: 1701156442}
   entryPoint: {x: 0, y: 1.313, z: 0.6177}
@@ -1928,6 +1928,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5781667855697811278, guid: aaa3838a52e96014383d7e30acd9f2c7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811279, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
