@@ -951,7 +951,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271463512}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de1c1ad82912a6c4fa1072e15f2a0abe, type: 3}
   m_Name: 
@@ -1063,7 +1063,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271463512}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -1264,7 +1264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1414486630}
-  - component: {fileID: 1414486632}
+  - component: {fileID: 1414486634}
   - component: {fileID: 1414486629}
   - component: {fileID: 1414486633}
   m_Layer: 0
@@ -1290,7 +1290,7 @@ AudioSource:
   m_Pitch: 1
   Loop: 0
   Mute: 0
-  Spatialize: 1
+  Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
@@ -1330,7 +1330,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1385,35 +1385,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1414486632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414486627}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03135ec613f7cf04f9b5945a85239d78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  x: 0
-  y: 0
-  sonification: 2
-  sequential: 1
-  errorMargin: 5
-  advanceMargin: 1
-  MAX_DISTANCE: 10
-  MIN_DISTANCE: 0
-  spatialChord:
-  - 440
-  - 554.37
-  - 659.25
-  catheter: {fileID: 1306546143}
-  patientSkull: {fileID: 1701156442}
-  entryPoint: {x: 0, y: 1.313, z: 0.6177}
-  camera: {fileID: 963194228}
-  catheterSoundTransform: {fileID: 1271463514}
 --- !u!114 &1414486633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1495,6 +1466,29 @@ MonoBehaviour:
   - 0
   applyHRTFToPathing: 0
   pathingMixLevel: 1
+--- !u!114 &1414486634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414486627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf0d205455486447b96233b5c2ea9d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  n: 10
+  sonification: 1
+  MAX_DISTANCE: 10
+  MIN_DISTANCE: 1
+  spatialChord:
+  - 440
+  - 554.37
+  - 659.25
+  catheter: {fileID: 1306546143}
+  camera: {fileID: 963194228}
+  catheterSoundTransform: {fileID: 1271463514}
 --- !u!1 &1684951658 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4283425761326543017, guid: 1f4d373a613d0466fbd8849470265852,
