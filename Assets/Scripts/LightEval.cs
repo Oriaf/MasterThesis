@@ -145,9 +145,14 @@ public class LightEval : MonoBehaviour
         }
 		
 
-		mousePos = Input.mousePosition;
-		mousePos.x = (2f * mousePos.x) / Screen.width - 1f;
-		mousePos.y = (2f * mousePos.y) / Screen.height - 1f;
+		Vector3 temp = Input.mousePosition;
+		temp.x = Mathf.Clamp((2f * temp.x) / Screen.width - 1f, -1f, 1f);
+		temp.y = Mathf.Clamp((2f * temp.y) / Screen.height - 1f, -1f, 1f);
+
+		temp.x = Mathf.Abs(temp.x - mousePos.x) < 0.01f ? mousePos.x : temp.x;
+        temp.y = Mathf.Abs(temp.y - mousePos.y) < 0.01f ? mousePos.y : temp.y;
+
+		mousePos = temp;
 	
 		if(!trainingDone){
 			mousePos.z = calculateField(mousePos);

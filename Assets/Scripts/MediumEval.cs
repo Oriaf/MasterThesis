@@ -18,7 +18,10 @@ public class MediumEval : MonoBehaviour
 
     [Header("Sonification Settings")]
 	public SonificationType sonification = SonificationType.Simple;
-	public float MAX_DISTANCE = 1f;
+    public bool sequential = false;
+    public float errorMargin = 5.0f; // Error margin in degrees
+    public float advanceMargin = 1.0f; // Error margin allowed to move to the next axis, in degrees
+    public float MAX_DISTANCE = 1f;
 	public float MIN_DISTANCE = 1f;
     public double[] spatialChord = { 440.0, 554.37, 659.25 }; //A4, C#6, E5 (A Major Chord)
 
@@ -31,8 +34,11 @@ public class MediumEval : MonoBehaviour
 	private Vector3 targetNormal;
 	private Vector3 angles;
 
-	// Sonification Instruments
-	private ShepardTone shepard;
+    // Sequential/Parallel
+    private int currentAxis = 0;
+
+    // Sonification Instruments
+    private ShepardTone shepard;
 	private SimpleTone simple;
 	private SpatialTone spatial;
 
@@ -116,6 +122,40 @@ public class MediumEval : MonoBehaviour
 
         angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > 0.01f ? yaw : angles.x;
         angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > 0.01f ? pitch : angles.y;
+
+        if (sequential)
+        {
+            if (currentAxis == 0)
+            {
+                if (Mathf.Abs(angles.y) < advanceMargin / 180f) //We are within an acceptable difference, move on to the next step
+                {
+                    currentAxis = 1;
+                }
+                else
+                {
+                    // Only the pitch matters currently
+                    angles.x = 0;
+                    catYaw = 0;
+                }
+            }
+
+            if (currentAxis == 1)
+            {
+                if (Mathf.Abs(angles.y) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
+                {
+                    currentAxis = 0;
+
+                    // Only the pitch matters then
+                    angles.x = 0;
+                    catYaw = 0;
+                }
+                else
+                {
+                    angles.y = 0; // Only the yaw matters currently
+                    catPitch = 0;
+                }
+            }
+        }
 
 
         // Update the psotion of the sound source (for spatial)
