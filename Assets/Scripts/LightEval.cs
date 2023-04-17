@@ -9,7 +9,8 @@ public class LightEval : MonoBehaviour
 	
 	[Header("Sonification Settings")]
 	public SonificationType sonification = SonificationType.Simple;
-	public double sigma0 = 1.4 / 12.0;
+    public double[] spatialChord = { 440.0, 554.37, 659.25 }; //A4, C#6, E5 (A Major Chord)
+    public double sigma0 = 1.4 / 12.0;
 	public double mu0 = 0;
 	
 	[Header("Light EvaluationS Settings")]
@@ -35,7 +36,7 @@ public class LightEval : MonoBehaviour
     {
 		shepard = new ShepardTone(30, 0.5f, 48000, 12);
 		simple = new SimpleTone(130, 0.25f, 48000, 1.0f, GetComponent<AudioSource>());
-		spatial = new SpatialTone(0.5f, 48000);
+		spatial = new SpatialTone(spatialChord, 0.5f, 48000);
 		
 		valIndex = new int[n];
 		int max = values.Length;
