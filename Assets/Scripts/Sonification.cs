@@ -15,9 +15,25 @@ public class Sonification : MonoBehaviour
 	public bool sequential = false;
 	public float errorMargin = 5.0f; // Error margin in degrees
 	public float advanceMargin = 1.0f; // Error margin allowed to move to the next axis, in degrees
+	public float lockinDelay = 0.5f; // Time in seconds that the user needs to keep the catheter within the error margin before the axis changes in a sequential sonification
+    public float outOfMarginDelay = 0.1f; // Time in seconds that the user needs to be outside of the error margin before the axis changes back to the faulty axis in a sequential sonification
     public float MAX_DISTANCE = 1f;
 	public float MIN_DISTANCE = 1f;
-    public double[] spatialChord = { 440.0, 554.37, 659.25 }; //A4, C#6, E5 (A Major Chord)
+    public double[] spatialChord = { 440.0, 554.37, 659.25 }; //A4, C#5, E5 (A Major Chord)
+	public float THRESHOLD = 0.5f; // The threshold in degrees that a movement needs to surpass to be sonified
+
+	[Header("Sonification Feedback Settings")]
+    public double[] sequentialAdvanceChord = { 1108.73, 1396.91, 1760.00 }; //C#6, F6, A6 (C# Augmented Chord)
+    public double[] sequentialReverseChord = { 69.30, 82.41, 98.00 }; //C#2, E2, G2 (C# Diminished Chord)
+	public float chordDuration = 1.0f; //How long the chord will play for, in seconds
+
+    // Sequential/Parallel
+    private int currentAxis = 0;
+    private bool playChord = false;
+	private float chordTime = 0;
+	private float lockinTime = 0;
+	private bool lockingIn = false;
+
 
     [Header("Sonification Data")]
 	public Transform catheter;
@@ -31,13 +47,14 @@ public class Sonification : MonoBehaviour
 	private Vector3 targetPoint;
 	private Vector3 angles;
 
-	// Sequential/Parallel
-	private int currentAxis = 0;
-
 	// Sonification Instruments
 	private ShepardTone shepard;
 	private SimpleTone simple;
 	private SpatialTone spatial;
+
+	// Status noises
+	private ChordTone sequentialFeedbackAdvance;
+    private ChordTone sequentialFeedbackReverse;
 
     // Start is called before the first frame update
     void Start()
@@ -45,8 +62,11 @@ public class Sonification : MonoBehaviour
 		shepard = new ShepardTone(30, 0.5f, 48000, 12);
 		simple = new SimpleTone(130, 0.25f, 48000, 1.0f, GetComponent<AudioSource>());
 		spatial = new SpatialTone(spatialChord, 0.5f, 48000);
-		
-		angles = Vector3.zero;
+
+		sequentialFeedbackAdvance = new ChordTone(sequentialAdvanceChord, 0.5f, 48000, false);
+        sequentialFeedbackReverse = new ChordTone(sequentialReverseChord, 0.5f, 48000, false);
+
+        angles = Vector3.zero;
 		
 		// Calculate the target alignment
 		RaycastHit hit;
@@ -116,43 +136,72 @@ public class Sonification : MonoBehaviour
 
         Debug.DrawRay(catheter.position, targetNormal, Color.yellow);
 
-        angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > 0.01f ? yaw : angles.x;
-        angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > 0.01f ? pitch : angles.y;
+        angles.x = Mathf.Abs(Mathf.Abs(yaw) - Mathf.Abs(angles.x)) > THRESHOLD / 180f ? yaw : angles.x;
+        angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > THRESHOLD / 180f ? pitch : angles.y;
 
 		if (sequential)
 		{
 			if(currentAxis == 0)
 			{
-				if(Mathf.Abs(angles.y) < advanceMargin / 180f) //We are within an acceptable difference, move on to the next step
+				if(Mathf.Abs(angles.y) < advanceMargin / 180f) //We are within an acceptable difference
 				{
-					currentAxis = 1;
-				}
+					if (!lockingIn)
+					{
+						lockingIn = true;
+						lockinTime = Time.time;
+					}
+					else if (Time.time - lockinTime > lockinDelay)
+                    {
+                        currentAxis = 1;
+                        playChord = true;
+                        chordTime = Time.time;
+
+                        lockingIn = false;
+                    }
+
+                }
 				else
 				{
-                    // Only the pitch matters currently
-                    angles.x = 0;
-					catYaw = 0;
-				}
+                    lockingIn = false; // We are no longer in the error margin, so we are not locking in anymore (if we previously were)
+                }          
+
+                // Only the pitch matters currently
+                angles.x = 0;
+				catYaw = 0;
 			}
 
             if (currentAxis == 1)
             {
                 if (Mathf.Abs(angles.y) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
                 {
-                    currentAxis = 0;
+					if (!lockingIn)
+					{
+                        lockingIn = true;
+						lockinTime = Time.time;
+                    }
+					else if (Time.time - lockinTime > outOfMarginDelay)
+                    {
+                        currentAxis = 0;
+                        playChord = true;
+                        chordTime = Time.time;
+                    }
+                }
+				else
+				{
+					lockingIn = false;
+				}
 
-                    // Only the pitch matters then
-                    angles.x = 0;
-					catYaw = 0;
-                }
-                else
-                {
-                    angles.y = 0; // Only the yaw matters currently
-					catPitch = 0;
-                }
+                angles.y = 0; // Only the yaw matters currently
+				catPitch = 0;
             }
+
+
         }
 
+        if (playChord && Time.time - chordTime > chordDuration)
+        {
+            playChord = false;
+        }
 
         // Update the psotion of the sound source (for spatial)
         const float RAD_CON = Mathf.PI / 180f;
@@ -170,9 +219,8 @@ public class Sonification : MonoBehaviour
 		pos += camera.position;
         catheterSoundTransform.position = pos;
 
-
-
         Debug.Log(angles);
+		//Debug.Log("\t Play Chord: " + playChord + ", Axis:" + currentAxis + ", Time Left: " + (chordDuration - (Time.time - chordTime)));
     }
 	
 	void OnAudioFilterRead(float[] data, int channels){
@@ -180,5 +228,17 @@ public class Sonification : MonoBehaviour
 		
 		Instrument instrument = getInstrument();
 		instrument.sampleInstrument(data, channels, pos);
+
+		if (playChord)
+		{
+			float[] buff = new float[data.Length];
+			if(currentAxis == 0) sequentialFeedbackReverse.sampleInstrument(buff, channels, pos);
+			else sequentialFeedbackAdvance.sampleInstrument(buff, channels, pos);
+
+			for (int i = 0; i < data.Length; i++)
+			{
+				data[i] = buff[i];
+			}
+		}
 	}
 }

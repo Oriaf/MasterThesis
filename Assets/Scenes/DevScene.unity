@@ -951,7 +951,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271463512}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de1c1ad82912a6c4fa1072e15f2a0abe, type: 3}
   m_Name: 
@@ -982,7 +982,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271463512}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
   m_Name: 
@@ -1063,7 +1063,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1271463512}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -1290,7 +1290,7 @@ AudioSource:
   m_Pitch: 1
   Loop: 0
   Mute: 0
-  Spatialize: 1
+  Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
@@ -1330,7 +1330,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1399,16 +1399,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 0
   y: 0
-  sonification: 2
+  sonification: 0
   sequential: 1
   errorMargin: 5
   advanceMargin: 1
+  lockinDelay: 1
+  outOfMarginDelay: 0.1
   MAX_DISTANCE: 10
   MIN_DISTANCE: 0
   spatialChord:
   - 440
   - 554.37
   - 659.25
+  THRESHOLD: 0.5
+  sequentialAdvanceChord:
+  - 554.37
+  - 659.25
+  - 830.61
+  sequentialReverseChord:
+  - 440
+  - 554.37
+  - 659.25
+  chordDuration: 0.1
   catheter: {fileID: 1306546143}
   patientSkull: {fileID: 1701156442}
   entryPoint: {x: 0, y: 1.313, z: 0.6177}
@@ -1421,7 +1433,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414486627}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
   m_Name: 
