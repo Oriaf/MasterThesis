@@ -1403,10 +1403,10 @@ MonoBehaviour:
   sequential: 1
   errorMargin: 5
   advanceMargin: 1
-  lockinDelay: 1
+  lockinDelay: 0.5
   outOfMarginDelay: 0.1
-  MAX_DISTANCE: 10
-  MIN_DISTANCE: 0
+  MAX_DISTANCE: 1
+  MIN_DISTANCE: 1
   spatialChord:
   - 440
   - 554.37
@@ -1414,16 +1414,16 @@ MonoBehaviour:
   THRESHOLD: 0.5
   sequentialAdvanceChord:
   - 554.37
-  - 659.25
+  - 698.46
   - 830.61
   sequentialReverseChord:
-  - 440
   - 554.37
   - 659.25
+  - 830.61
   chordDuration: 0.1
   catheter: {fileID: 1306546143}
   patientSkull: {fileID: 1701156442}
-  entryPoint: {x: 0, y: 1.313, z: 0.6177}
+  entryPoint: {x: -1, y: 0.313, z: -0.3823}
   camera: {fileID: 963194228}
   catheterSoundTransform: {fileID: 1271463514}
 --- !u!114 &1414486633

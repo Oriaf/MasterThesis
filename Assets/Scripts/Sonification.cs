@@ -23,9 +23,9 @@ public class Sonification : MonoBehaviour
 	public float THRESHOLD = 0.5f; // The threshold in degrees that a movement needs to surpass to be sonified
 
 	[Header("Sonification Feedback Settings")]
-    public double[] sequentialAdvanceChord = { 1108.73, 1396.91, 1760.00 }; //C#6, F6, A6 (C# Augmented Chord)
-    public double[] sequentialReverseChord = { 69.30, 82.41, 98.00 }; //C#2, E2, G2 (C# Diminished Chord)
-	public float chordDuration = 1.0f; //How long the chord will play for, in seconds
+    public double[] sequentialAdvanceChord = { 554.37, 698.46, 830.61 }; //C#5, F5, G#5 (C# Major Chord)
+    public double[] sequentialReverseChord = { 554.37, 659.25, 830.61 }; //C#5, E5, G5 (C# Minor Chord)
+	public float chordDuration = 0.1f; //How long the chord will play for, in seconds
 
     // Sequential/Parallel
     private int currentAxis = 0;
