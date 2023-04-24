@@ -349,6 +349,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sonification: 1
+  spatialChord:
+  - 440
+  - 554.37
+  - 659.25
   sigma0: 0.233333333333334
   mu0: -0.233333333333334
   n: 20
@@ -606,7 +610,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: aefe8b8a533991245a26a0c56d916216, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9f2a24557b5fdf44c94bdc426828b0d9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
