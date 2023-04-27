@@ -9,6 +9,8 @@ public class Evaluation : MonoBehaviour
 	 
     [Header("Evaluations Settings")]
     public int n = 10;
+    public float[] skullYaw;
+    public float[] skullPitch;
 
     // Result variables
     private Vector3[] resPerDim; // Error per angle
@@ -49,6 +51,7 @@ public class Evaluation : MonoBehaviour
     public Transform targetHole;
     public float targetDepth = 6.5f; // Target depth in cms
     private Vector3 targetPoint;
+    public Transform skull;
 
     // Data Variables
     private Vector3 targetNormal;
@@ -86,13 +89,8 @@ public class Evaluation : MonoBehaviour
         resAngle = new float[n];
         resTime = new float[n];
 
-        // Calculate the target alignment
-        targetNormal = targetHole.up;
-        Debug.Log("Taget Normal: " + targetNormal);
-
-        // Calculate the target point
-        targetPoint = targetHole.position - targetHole.up * (targetDepth / 100f);
-        Debug.Log("Target Point: " + targetPoint);
+        // Calculate the target point and normal
+        calculateTarget();
 
         currentTrial = 0;
         time = float.NegativeInfinity;
@@ -122,6 +120,32 @@ public class Evaluation : MonoBehaviour
 		
 		return instrument;
 	}
+
+    private void calculateTarget() {
+        // Calculate the target alignment
+        targetNormal = targetHole.up;
+        Debug.Log("Taget Normal: " + targetNormal);
+
+        // Calculate the target point
+        targetPoint = targetHole.position - targetHole.up * (targetDepth / 100f);
+        Debug.Log("Target Point: " + targetPoint);
+    }
+
+    private void prepareTrial()
+    {
+        // Rotate the skull appropriately
+        Vector3 eul = new Vector3(skullPitch[currentTrial] + 90f, skullYaw[currentTrial], 0);
+        skull.eulerAngles = eul;
+
+        // Recalculate where the target is
+        calculateTarget();
+
+        // Set flags
+        answered = false;
+
+        // Start the timer
+        time = Time.time;
+    }
 
     // Update is called once per frame
     void Update()
@@ -233,8 +257,8 @@ public class Evaluation : MonoBehaviour
             if (Input.GetKeyDown("space")){
                 trainingDone = true;
 
-                time = Time.time;
                 Debug.Log("Starting the trial!");
+                prepareTrial();
             }
 
             return;
@@ -259,8 +283,7 @@ public class Evaluation : MonoBehaviour
 
         if (answered && Input.GetKeyDown("space") && !end)
         {
-            answered = false;
-            time = Time.time;
+            prepareTrial();
         }
 
         if(currentTrial >= n)

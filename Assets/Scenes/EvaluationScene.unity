@@ -1535,6 +1535,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   n: 10
+  skullYaw:
+  - -10
+  - 5
+  - 10
+  - -5
+  - 0
+  - 0
+  - 5
+  - -10
+  - 10
+  - -5
+  skullPitch:
+  - 5
+  - 0
+  - 5
+  - 5
+  - 0
+  - 5
+  - 5
+  - 0
+  - 0
+  - 0
   sonification: 0
   sequential: 0
   errorMargin: 5
@@ -1563,6 +1585,7 @@ MonoBehaviour:
   catheterSoundTransform: {fileID: 1271463514}
   targetHole: {fileID: 1620762365}
   targetDepth: 6.5
+  skull: {fileID: 1841707468}
 --- !u!1 &1620762364
 GameObject:
   m_ObjectHideFlags: 0
@@ -1771,6 +1794,12 @@ MonoBehaviour:
   m_TrackingType: 0
   m_UpdateType: 0
   m_UseRelativeTransform: 0
+--- !u!4 &1841707468 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 882819a87d324eb448b57299ea48f03e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1353779573}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1934505122
 PrefabInstance:
   m_ObjectHideFlags: 0
