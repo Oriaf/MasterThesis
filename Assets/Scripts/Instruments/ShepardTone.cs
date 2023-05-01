@@ -13,8 +13,8 @@ public class ShepardTone : Instrument
 	private double scaleFactorX;
 	private double scaleFactorY = 15;
 
-	public double sigma0 = 1.4 / 12.0;
-	public double mu0 = 0;
+	public double sigma0 = 0.3;
+	public double mu0 = 0.06;
 
 	public ShepardTone(double f0, float g, double sr, int n) : base(f0, g, sr){
 		N = n;
