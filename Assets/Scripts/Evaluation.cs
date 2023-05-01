@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 
 public class Evaluation : MonoBehaviour
@@ -80,8 +81,8 @@ public class Evaluation : MonoBehaviour
 		simple = new SimpleTone(130, 0.25f, 48000, 1.0f, GetComponent<AudioSource>());
 		spatial = new SpatialTone(spatialChord, 0.5f, 48000);
 
-        sequentialFeedbackAdvance = new ChordTone(sequentialAdvanceChord, 0.5f, 48000, false);
-        sequentialFeedbackReverse = new ChordTone(sequentialReverseChord, 0.5f, 48000, false);
+        sequentialFeedbackAdvance = new ChordTone(sequentialAdvanceChord, 0.25f, 48000, false);
+        sequentialFeedbackReverse = new ChordTone(sequentialReverseChord, 0.25f, 48000, false);
 
         angles = Vector3.zero;
 
@@ -90,14 +91,13 @@ public class Evaluation : MonoBehaviour
         resTime = new float[n];
 
         // Calculate the target point and normal
-        calculateTarget();
+        targetNormal = new Vector3(0, 0, -1);
 
         currentTrial = 0;
         time = float.NegativeInfinity;
         end = false;
         trainingDone = false;
         answered = false;
-        targetNormal = Vector3.up;
     }
 	
 	private Instrument getInstrument(){
@@ -134,7 +134,7 @@ public class Evaluation : MonoBehaviour
     private void prepareTrial()
     {
         // Rotate the skull appropriately
-        Vector3 eul = new Vector3(skullPitch[currentTrial] + 90f, skullYaw[currentTrial], 0);
+        Vector3 eul = new Vector3(skullPitch[currentTrial] + 90f, skullYaw[currentTrial] + 180f, 0);
         skull.eulerAngles = eul;
 
         // Recalculate where the target is
@@ -175,7 +175,7 @@ public class Evaluation : MonoBehaviour
         {
             if (currentAxis == 0)
             {
-                if (Mathf.Abs(angles.y) < advanceMargin / 180f) //We are within an acceptable difference
+                if (Mathf.Abs(angles.x) < advanceMargin / 180f) //We are within an acceptable difference
                 {
                     if (!lockingIn)
                     {
@@ -197,14 +197,14 @@ public class Evaluation : MonoBehaviour
                     lockingIn = false; // We are no longer in the error margin, so we are not locking in anymore (if we previously were)
                 }
 
-                // Only the pitch matters currently
-                angles.x = 0;
+                // Only the yaw matters currently
+                angles.y = 0;
                 catYaw = 0;
             }
 
             if (currentAxis == 1)
             {
-                if (Mathf.Abs(angles.y) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
+                if (Mathf.Abs(angles.x) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
                 {
                     if (!lockingIn)
                     {
@@ -223,7 +223,7 @@ public class Evaluation : MonoBehaviour
                     lockingIn = false;
                 }
 
-                angles.y = 0; // Only the yaw matters currently
+                angles.x = 0; // Only the yaw matters currently
                 catPitch = 0;
             }
 
@@ -274,7 +274,12 @@ public class Evaluation : MonoBehaviour
             resAngle[currentTrial] = Vector3.Angle(catheter.up, targetNormal);
             resTime[currentTrial] = (Time.time - time);
 
-            Debug.Log(currentTrial + ": " + resPerDim[currentTrial] + " degrees, " + resAngle[currentTrial] + " degrees, " + resTime[currentTrial] + "s");
+            string res = currentTrial + ": " + resPerDim[currentTrial] + " degrees, " + resAngle[currentTrial] + " degrees, " + resTime[currentTrial] + "s";
+            Debug.Log(res);
+            using (StreamWriter writer = new StreamWriter("Result.txt", true))
+            {
+                writer.WriteLine(res);
+            }
 
             // Prepare for the nextion session
             answered = true;
@@ -310,7 +315,13 @@ public class Evaluation : MonoBehaviour
                 errorAngle = errorAngle / n;
                 timeTaken = timeTaken / n;
 
-                Debug.Log("Mean: " + errorPerAngle + " degrees, " + errorAngle + " degrees, " + timeTaken + "s");
+                string res = "Mean: " + errorPerAngle + " degrees, " + errorAngle + " degrees, " + timeTaken + "s";
+                Debug.Log(res);
+
+                using(StreamWriter writer = new StreamWriter("Result.txt", true))
+                {
+                    writer.WriteLine(res);
+                }
             }
 
             end = true;
