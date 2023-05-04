@@ -36,4 +36,9 @@ public class SpatialTone : Instrument
 			data[i] = data[i] / (3.0f);
 		}
 	}
+
+    override public string ToString()
+    {
+        return "SpatialTone";
+    }
 }

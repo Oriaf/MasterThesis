@@ -58,4 +58,9 @@ public class ShepardTone : Instrument
 		}
 	}
 
+	override public string ToString()
+	{
+		return "ShepardTone";
+	}
+
 }

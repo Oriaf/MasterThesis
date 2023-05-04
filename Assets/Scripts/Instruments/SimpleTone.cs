@@ -58,4 +58,9 @@ public class SimpleTone : Instrument
 			}
 		}
 	}
+
+	override public string ToString()
+	{
+		return "DirectTone";
+	}
 }

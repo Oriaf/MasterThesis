@@ -1,3 +1,5 @@
+
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -5,7 +7,7 @@ public class Evaluation : MonoBehaviour
 {
 
 	public enum SonificationType {
-		Simple, Psychoacoustic, Spatial
+		Direct, Psychoacoustic, Spatial
 	}
 	 
     [Header("Evaluations Settings")]
@@ -19,7 +21,8 @@ public class Evaluation : MonoBehaviour
     private float[] resTime; // The time it took to reach the angle
 
     [Header("Sonification Settings")]
-	public SonificationType sonification = SonificationType.Simple;
+    public bool sonificationOn = true;
+	public SonificationType sonification = SonificationType.Direct;
     public bool sequential = false;
     public float errorMargin = 5.0f; // Error margin in degrees
     public float advanceMargin = 1.0f; // Error margin allowed to move to the next axis, in degrees
@@ -74,6 +77,10 @@ public class Evaluation : MonoBehaviour
     private bool trainingDone;
     private bool answered;
 
+    // Setup Systems
+    private bool setupPos = true;
+    private bool setupNorm = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -104,7 +111,7 @@ public class Evaluation : MonoBehaviour
 		Instrument instrument = simple;
 	
 		switch(sonification){
-			case SonificationType.Simple:
+			case SonificationType.Direct:
 				instrument = simple;
 				break;
 			case SonificationType.Psychoacoustic:
@@ -134,8 +141,8 @@ public class Evaluation : MonoBehaviour
     private void prepareTrial()
     {
         // Rotate the skull appropriately
-        Vector3 eul = new Vector3(skullPitch[currentTrial] + 90f, skullYaw[currentTrial] + 180f, 0);
-        skull.eulerAngles = eul;
+        Vector3 eul = new Vector3(skullPitch[currentTrial] + 45f, skullYaw[currentTrial] + 180f, 0);
+        //skull.eulerAngles = eul;
 
         // Recalculate where the target is
         calculateTarget();
@@ -150,6 +157,10 @@ public class Evaluation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.DrawRay(targetHole.position, -targetNormal);
+        Debug.DrawRay(Vector3.zero, targetNormal, Color.yellow);
+        Debug.DrawRay(Vector3.zero, catheter.up, Color.red);
+
         /*
             1. Convert the two target vectors to spherical coordinates with the xz reference plane
             2. Take the difference between their angles to get the relative yaw and pitch
@@ -254,10 +265,55 @@ public class Evaluation : MonoBehaviour
 
         if (!trainingDone)
         {
-            if (Input.GetKeyDown("space")){
+            // Setup of the target
+            if (setupPos && Input.GetKeyDown("space"))
+            {
+                Debug.Log("Phantom placed");
+                Vector3 position = catheter.position - catheter.up * 0.22f;
+                Vector3 offset = skull.position - targetHole.position;
+                skull.position = position + offset;
+
+                setupPos = false;
+                setupNorm = true;
+
+                return;
+            }
+            else if (setupNorm && Input.GetKeyDown("space"))
+            {
+                Debug.Log("Normal Calculated");
+                /*Vector3 position = catheter.position - catheter.up * 0.22f;
+                Vector3 offset = skull.position - targetHole.position;
+                skull.position = position + offset;*/
+                //targetNormal = catheter.forward;
+
+                skull.rotation = catheter.rotation;
+
+                /*targetPitch = Mathf.Acos(targetNormal.y / targetNormal.magnitude) * DEG_CON; //0 - 180 degrees
+                targetYaw = Mathf.Atan2(targetNormal.z, targetNormal.x) * DEG_CON; //-180 - 180 degress 
+
+                String res = "\t Yaw: " + targetYaw + ", Pitch: " + targetPitch;
+                Debug.Log(res);
+                using (StreamWriter writer = new StreamWriter("Normal.txt", true))
+                {
+                    writer.WriteLine(res);
+                }*/
+
+                setupNorm = false;
+
+                return;
+            }
+            else if (Input.GetKeyDown("space")){
                 trainingDone = true;
 
                 Debug.Log("Starting the trial!");
+
+                string res = getInstrument().ToString() + " " + ((sequential) ? "sequential" : "parallel");
+                string heading = "Trial, Pitch, Yaw, Roll, Angle, Time";
+                using (StreamWriter writer = new StreamWriter("Result.txt", true))
+                {
+                    writer.WriteLine(res);
+                    writer.WriteLine(heading);
+                }
                 prepareTrial();
             }
 
@@ -265,16 +321,15 @@ public class Evaluation : MonoBehaviour
         }
 
         if (catheterCollider.bounds.Contains(targetPoint) && !answered && !end)
+        //if (Input.GetKeyDown("space") && !answered && !end)
         {
-            // Provide feedback that the target was reached
-            //TODO!
-
             // Calculate and print the results
             resPerDim[currentTrial] = angles * 180f;
             resAngle[currentTrial] = Vector3.Angle(catheter.up, targetNormal);
             resTime[currentTrial] = (Time.time - time);
 
-            string res = currentTrial + ": " + resPerDim[currentTrial] + " degrees, " + resAngle[currentTrial] + " degrees, " + resTime[currentTrial] + "s";
+            string perDim = resPerDim[currentTrial].x + ", " + resPerDim[currentTrial].y + ", " + resPerDim[currentTrial].z;
+            string res = currentTrial + ", " + perDim + ", " + resAngle[currentTrial] + ", " + resTime[currentTrial];
             Debug.Log(res);
             using (StreamWriter writer = new StreamWriter("Result.txt", true))
             {
@@ -315,7 +370,8 @@ public class Evaluation : MonoBehaviour
                 errorAngle = errorAngle / n;
                 timeTaken = timeTaken / n;
 
-                string res = "Mean: " + errorPerAngle + " degrees, " + errorAngle + " degrees, " + timeTaken + "s";
+                string errPer = errorPerAngle.x + ", " + errorPerAngle.y + ", " + errorPerAngle.z;
+                string res = "Mean, " + errPer + ", " + errorAngle + ", " + timeTaken;
                 Debug.Log(res);
 
                 using(StreamWriter writer = new StreamWriter("Result.txt", true))
@@ -332,7 +388,7 @@ public class Evaluation : MonoBehaviour
 	void OnAudioFilterRead(float[] data, int channels){
 		Vector3 pos = angles;
 
-        if (!answered && currentTrial < n)
+        if (!answered && currentTrial < n && sonificationOn)
         {
             if (playChord)
             {
