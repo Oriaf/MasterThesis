@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using UnityEngine;
@@ -54,6 +53,8 @@ public class Evaluation : MonoBehaviour
     [Header("Sonification Target")]
     public Transform targetHole;
     public float targetDepth = 6.5f; // Target depth in cms
+    public GameObject target;
+    private TargetCollider targetCollider;
     private Vector3 targetPoint;
     public Transform skull;
 
@@ -76,10 +77,13 @@ public class Evaluation : MonoBehaviour
     private bool end;
     private bool trainingDone;
     private bool answered;
+    private bool answering;
+    private float answerTime;
+    private float answerDelay = 1f;
 
     // Setup Systems
-    private bool setupPos = true;
-    private bool setupNorm = false;
+    /*private bool setupPos = true;
+    private bool setupNorm = false;*/
 
     // Start is called before the first frame update
     void Start()
@@ -99,6 +103,7 @@ public class Evaluation : MonoBehaviour
 
         // Calculate the target point and normal
         targetNormal = new Vector3(0, 0, -1);
+        targetCollider = target.GetComponent<TargetCollider>();
 
         currentTrial = 0;
         time = float.NegativeInfinity;
@@ -141,7 +146,7 @@ public class Evaluation : MonoBehaviour
     private void prepareTrial()
     {
         // Rotate the skull appropriately
-        Vector3 eul = new Vector3(skullPitch[currentTrial] + 45f, skullYaw[currentTrial] + 180f, 0);
+        //Vector3 eul = new Vector3(skullPitch[currentTrial] + 45f, skullYaw[currentTrial] + 180f, 0);
         //skull.eulerAngles = eul;
 
         // Recalculate where the target is
@@ -210,7 +215,7 @@ public class Evaluation : MonoBehaviour
 
                 // Only the yaw matters currently
                 angles.y = 0;
-                catYaw = 0;
+                catPitch = 0;
             }
 
             if (currentAxis == 1)
@@ -234,8 +239,8 @@ public class Evaluation : MonoBehaviour
                     lockingIn = false;
                 }
 
-                angles.x = 0; // Only the yaw matters currently
-                catPitch = 0;
+                //angles.x = 0; // Only the pitch matters currently
+                //catYaw = 0;
             }
 
 
@@ -266,7 +271,7 @@ public class Evaluation : MonoBehaviour
         if (!trainingDone)
         {
             // Setup of the target
-            if (setupPos && Input.GetKeyDown("space"))
+            /*if (setupPos && Input.GetKeyDown("space"))
             {
                 Debug.Log("Phantom placed");
                 Vector3 position = catheter.position - catheter.up * 0.22f;
@@ -283,7 +288,7 @@ public class Evaluation : MonoBehaviour
                 Debug.Log("Normal Calculated");
                 /*Vector3 position = catheter.position - catheter.up * 0.22f;
                 Vector3 offset = skull.position - targetHole.position;
-                skull.position = position + offset;*/
+                skull.position = position + offset;*!/
                 //targetNormal = catheter.forward;
 
                 skull.rotation = catheter.rotation;
@@ -296,18 +301,18 @@ public class Evaluation : MonoBehaviour
                 using (StreamWriter writer = new StreamWriter("Normal.txt", true))
                 {
                     writer.WriteLine(res);
-                }*/
+                }*!/
 
                 setupNorm = false;
 
                 return;
-            }
-            else if (Input.GetKeyDown("space")){
+            }*/
+            if (Input.GetKeyDown("space")){
                 trainingDone = true;
 
                 Debug.Log("Starting the trial!");
 
-                string res = getInstrument().ToString() + " " + ((sequential) ? "sequential" : "parallel");
+                string res = ((sonificationOn) ? getInstrument().ToString() : "Freehand") + " " + ((sequential) ? "sequential" : "parallel");
                 string heading = "Trial, Pitch, Yaw, Roll, Angle, Time";
                 using (StreamWriter writer = new StreamWriter("Result.txt", true))
                 {
@@ -320,25 +325,44 @@ public class Evaluation : MonoBehaviour
             return;
         }
 
-        if (catheterCollider.bounds.Contains(targetPoint) && !answered && !end)
-        //if (Input.GetKeyDown("space") && !answered && !end)
+        string pd = (angles.x * 180f) + ", " + (angles.y * 180f) + ", " + (angles.z * 180f);
+        string rk = currentTrial + ", " + pd + ", " + Vector3.Angle(catheter.up, targetNormal) + ", " + (Time.time - time);
+        //Debug.Log(rk);
+
+        // Check if the catheter is in a valid answer position
+        //if (catheterCollider.bounds.Intersects(targetCollider.bounds) && !answered && !end)
+        if (targetCollider.getHit() && !answered && !end)
         {
-            // Calculate and print the results
-            resPerDim[currentTrial] = angles * 180f;
-            resAngle[currentTrial] = Vector3.Angle(catheter.up, targetNormal);
-            resTime[currentTrial] = (Time.time - time);
-
-            string perDim = resPerDim[currentTrial].x + ", " + resPerDim[currentTrial].y + ", " + resPerDim[currentTrial].z;
-            string res = currentTrial + ", " + perDim + ", " + resAngle[currentTrial] + ", " + resTime[currentTrial];
-            Debug.Log(res);
-            using (StreamWriter writer = new StreamWriter("Result.txt", true))
+            // Start the answer lockin timer and either answer or wait for the timer to run out
+            if (!answering)
             {
-                writer.WriteLine(res);
+                answering = true;
+                answerTime = Time.time;
             }
+            else if (Time.time - answerTime > answerDelay)
+            {
+                // Calculate and print the results
+                resPerDim[currentTrial] = (new Vector3(yaw, pitch, 0)) * 180f;
+                resAngle[currentTrial] = Vector3.Angle(catheter.up, targetNormal);
+                resTime[currentTrial] = (Time.time - time);
 
-            // Prepare for the nextion session
-            answered = true;
-            currentTrial++;
+                string perDim = resPerDim[currentTrial].x + ", " + resPerDim[currentTrial].y + ", " + resPerDim[currentTrial].z;
+                string res = currentTrial + ", " + perDim + ", " + resAngle[currentTrial] + ", " + resTime[currentTrial];
+                Debug.Log(res);
+                using (StreamWriter writer = new StreamWriter("Result.txt", true))
+                {
+                    writer.WriteLine(res);
+                }
+
+                // Prepare for the nextion session
+                answered = true;
+                answering = false;
+                currentTrial++;
+            }
+        }
+        else
+        {
+            answering = false;
         }
 
         if (answered && Input.GetKeyDown("space") && !end)
