@@ -215,7 +215,7 @@ public class Evaluation : MonoBehaviour
 
                 // Only the yaw matters currently
                 angles.y = 0;
-                catPitch = 0;
+                catPitch = targetPitch;
             }
 
             if (currentAxis == 1)
@@ -267,6 +267,11 @@ public class Evaluation : MonoBehaviour
         pos = (new Vector3(Mathf.Sin(catPitch * RAD_CON) * Mathf.Cos(catYaw * RAD_CON), Mathf.Cos(catPitch * RAD_CON), Mathf.Sin(catPitch * RAD_CON) * Mathf.Sin(catYaw * RAD_CON))) * r;
         pos += camera.position;
         catheterSoundTransform.position = pos;
+        if (playChord)
+        {
+            catheterSoundTransform.position = new Vector3(0, -1000, 0);
+            transform.position = camera.position;
+        }
 
         if (!trainingDone)
         {
@@ -368,6 +373,10 @@ public class Evaluation : MonoBehaviour
         if (answered && Input.GetKeyDown("space") && !end)
         {
             prepareTrial();
+        }
+        else if (answered)
+        {
+            catheterSoundTransform.position = new Vector3(0, -1000, 0);
         }
 
         if(currentTrial >= n)
