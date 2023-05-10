@@ -102,7 +102,7 @@ public class Evaluation : MonoBehaviour
         resTime = new float[n];
 
         // Calculate the target point and normal
-        targetNormal = new Vector3(0, 0, -1);
+        targetNormal = (new Vector3(0, 1, -1)).normalized;
         targetCollider = target.GetComponent<TargetCollider>();
 
         currentTrial = 0;
