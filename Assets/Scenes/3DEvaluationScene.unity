@@ -1821,7 +1821,7 @@ MonoBehaviour:
   - 0
   sonificationOn: 1
   sonification: 2
-  sequential: 1
+  sequential: 0
   errorMargin: 5
   advanceMargin: 3
   lockinDelay: 0.5

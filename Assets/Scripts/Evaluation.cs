@@ -318,7 +318,7 @@ public class Evaluation : MonoBehaviour
                 Debug.Log("Starting the trial!");
 
                 string res = ((sonificationOn) ? getInstrument().ToString() : "Freehand") + " " + ((sequential) ? "sequential" : "parallel");
-                string heading = "Trial, Pitch, Yaw, Roll, Angle, Time";
+                string heading = "Trial, Yaw, Pitch, Roll, Angle, Time";
                 using (StreamWriter writer = new StreamWriter("Result.txt", true))
                 {
                     writer.WriteLine(res);
