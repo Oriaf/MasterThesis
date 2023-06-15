@@ -37,7 +37,7 @@ public class ShepardTone : Instrument
         float[] buffer = new float[data.Length];
 		
 		partial[0].setX(pos.x * scaleFactorX);
-		partial[0].setY(pos.y);
+		partial[0].setY(pos.y * scaleFactorY);
 		partial[0].sampleTone(data, channels);
 		
 		for(int i = 1; i < N; i++){

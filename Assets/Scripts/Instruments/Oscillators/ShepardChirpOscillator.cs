@@ -73,7 +73,6 @@ public class ShepardChirpOscillator : Oscillator
     override public void sampleTone(float[] data, int channels)
     {
 
-
         double constantPart = 2.0 * System.Math.PI * frequency;
 
         double increment = 1.0 / sampleRate;

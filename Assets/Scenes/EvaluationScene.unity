@@ -1819,8 +1819,8 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  sonificationOn: 0
-  sonification: 1
+  sonificationOn: 1
+  sonification: 0
   sequential: 0
   errorMargin: 5
   advanceMargin: 3
