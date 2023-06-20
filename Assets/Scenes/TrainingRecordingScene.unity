@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.59937525, g: 0.5997512, b: 0.59948856, a: 1}
+  m_IndirectSpecularColor: {r: 0.59937465, g: 0.5997507, b: 0.59948814, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -490,14 +490,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1196918686}
-  m_LocalRotation: {x: 0.27059805, y: 0.6532815, z: -0.27059805, w: 0.6532815}
-  m_LocalPosition: {x: -0.5, y: 1.807, z: 0}
+  m_LocalRotation: {x: 0, y: 0.92387956, z: -0.38268343, w: 0}
+  m_LocalPosition: {x: 0, y: 1.807, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 45, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 180, z: 0}
 --- !u!1001 &1249075572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -642,7 +642,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directBinaural: 1
   interpolation: 1
-  perspectiveCorrection: 0
   distanceAttenuation: 1
   distanceAttenuationInput: 1
   distanceAttenuationValue: 1
@@ -948,14 +947,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414486627}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59c3684b22f00604a97bb68037fcf4cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   directBinaural: 1
   interpolation: 1
-  perspectiveCorrection: 0
   distanceAttenuation: 1
   distanceAttenuationInput: 1
   distanceAttenuationValue: 1
@@ -1039,13 +1037,13 @@ MonoBehaviour:
   catAngles: {x: 0, y: 0, z: 0}
   yawAlign: 0
   duration: 4
-  sonification: 1
-  sequential: 0
+  sonification: 0
+  sequential: 1
   errorMargin: 5
-  advanceMargin: 1
+  advanceMargin: 3
   lockinDelay: 0.5
   outOfMarginDelay: 0.1
-  MAX_DISTANCE: 1
+  MAX_DISTANCE: 10
   MIN_DISTANCE: 1
   spatialChord:
   - 440
@@ -1100,32 +1098,32 @@ PrefabInstance:
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.8535535
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.35355338
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.35355338
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.1464466
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 5781667855697811274, guid: aaa3838a52e96014383d7e30acd9f2c7,
         type: 3}

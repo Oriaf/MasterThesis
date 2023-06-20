@@ -174,17 +174,17 @@ public class Recording : MonoBehaviour
         angles.y = Mathf.Abs(Mathf.Abs(pitch) - Mathf.Abs(angles.y)) > THRESHOLD / 180f ? pitch : angles.y;
 
 		if (sequential)
-		{
-			if(currentAxis == 0)
-			{
-				if(Mathf.Abs(angles.y) < advanceMargin / 180f) //We are within an acceptable difference
-				{
-					if (!lockingIn)
-					{
-						lockingIn = true;
-						lockinTime = Time.time;
-					}
-					else if (Time.time - lockinTime > lockinDelay)
+        {
+            if (currentAxis == 0)
+            {
+                if (Mathf.Abs(angles.x) < advanceMargin / 180f) //We are within an acceptable difference
+                {
+                    if (!lockingIn)
+                    {
+                        lockingIn = true;
+                        lockinTime = Time.time;
+                    }
+                    else if (Time.time - lockinTime > lockinDelay)
                     {
                         currentAxis = 1;
                         playChord = true;
@@ -194,39 +194,39 @@ public class Recording : MonoBehaviour
                     }
 
                 }
-				else
-				{
+                else
+                {
                     lockingIn = false; // We are no longer in the error margin, so we are not locking in anymore (if we previously were)
-                }          
+                }
 
-                // Only the pitch matters currently
-                angles.x = 0;
-				catYaw = 0;
-			}
+                // Only the yaw matters currently
+                angles.y = 0;
+                catPitch = targetPitch;
+            }
 
             if (currentAxis == 1)
             {
-                if (Mathf.Abs(angles.y) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
+                if (Mathf.Abs(angles.x) > errorMargin / 180f) //We have moved out of the acceptable margin for the first axis, go back
                 {
-					if (!lockingIn)
-					{
+                    if (!lockingIn)
+                    {
                         lockingIn = true;
-						lockinTime = Time.time;
+                        lockinTime = Time.time;
                     }
-					else if (Time.time - lockinTime > outOfMarginDelay)
+                    else if (Time.time - lockinTime > outOfMarginDelay)
                     {
                         currentAxis = 0;
                         playChord = true;
                         chordTime = Time.time;
                     }
                 }
-				else
-				{
-					lockingIn = false;
-				}
+                else
+                {
+                    lockingIn = false;
+                }
 
-                angles.y = 0; // Only the yaw matters currently
-				catPitch = 0;
+                //angles.x = 0; // Only the pitch matters currently
+                //catYaw = 0;
             }
 
 
